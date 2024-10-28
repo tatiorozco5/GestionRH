@@ -5,12 +5,13 @@
 package gestionrh;
 
 import gestionrh.Config.ConexionDB;
+import gestionrh.dao.FuncionarioDAO;
         
 public class GestionRH {
 
     public static void main(String[] args) {
-        ConexionDB dbc = new ConexionDB();
-        dbc.Conectar();
+        // Listar todos los funcionarios
+        System.out.println("Funcionarios: " + FuncionarioDAO.listarFuncionarios());
     }
     
 }
