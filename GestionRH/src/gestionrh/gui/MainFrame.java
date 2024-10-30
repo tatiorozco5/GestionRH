@@ -11,6 +11,7 @@ public class MainFrame extends javax.swing.JFrame {
     private FuncionarioDAO funcionarioDAO;
     private JTable funcionarioTable;
     private DefaultTableModel tableModel;
+    private JButton actualizarButton;
 
     public MainFrame() {
         initComponents();
@@ -71,16 +72,27 @@ public class MainFrame extends javax.swing.JFrame {
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 
+        // Dentro del método initComponents() de MainFrame
+        JButton crearButton = new JButton("Crear Funcionario");
+        crearButton.addActionListener(e -> new CrearFuncionarioFrame().setVisible(true));
+
+        JButton actualizarButton = new JButton("Actualizar Funcionario");
+        actualizarButton.addActionListener(e -> new ActualizarFuncionarioFrame().setVisible(true));
+
+        // Añadir estos botones al layout
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(listarButton)
+                                .addComponent(crearButton)
+                                .addComponent(actualizarButton)
                                 .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 750,
                                         GroupLayout.PREFERRED_SIZE)));
 
+        // En el setVerticalGroup también se deben incluir los nuevos botones
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
-                        .addComponent(listarButton)
+                        .addComponent(crearButton)
+                        .addComponent(actualizarButton)
                         .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE));
 
         pack();
