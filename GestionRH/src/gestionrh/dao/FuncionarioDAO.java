@@ -9,4 +9,7 @@ import java.util.List;
 
 public interface FuncionarioDAO {
     List<Funcionario> listarFuncionarios();
+    void CrearFuncionario(Funcionario funcionario);
+    void ActualizarFuncionario(Funcionario funcionario);
+    Funcionario ObtenerFuncionario(int id);
 }
