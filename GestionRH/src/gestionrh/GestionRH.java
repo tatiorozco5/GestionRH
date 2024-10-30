@@ -9,12 +9,20 @@ import gestionrh.dao.FuncionarioDAO;
 import gestionrh.dao.FuncionarioDAOImpl;
 import java.util.Date;
 import java.util.List;
+import gestionrh.gui.MainFrame;
 
 
 public class GestionRH {
 
     public static void main(String[] args) {
-       FuncionarioDAO funcionarioDAO = new FuncionarioDAOImpl();
+        
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            MainFrame mainFrame = new MainFrame();
+            mainFrame.setVisible(true);
+});
+        
+    }
+     /*  FuncionarioDAO funcionarioDAO = new FuncionarioDAOImpl();
 
        System.out.println("Lista de todos los funcionarios:");
         List<Funcionario> todosLosFuncionarios = funcionarioDAO.listarFuncionarios();
@@ -22,7 +30,19 @@ public class GestionRH {
             System.out.println(funcionario);
         }
        
-       
+        Funcionario nuevoFuncionario = new Funcionario();
+        nuevoFuncionario.setTipoIdentificacion("CC");
+        nuevoFuncionario.setNumeroIdentificacion("465645465");
+        nuevoFuncionario.setNombres("Tati");
+        nuevoFuncionario.setApellidos("Orozco");
+        nuevoFuncionario.setEstadoCivil("Soltera");
+        nuevoFuncionario.setSexo("F");
+        nuevoFuncionario.setDireccion("Calle 125");
+        nuevoFuncionario.setTelefono("3213213321");
+        nuevoFuncionario.setFechaNacimiento(new Date());
+        funcionarioDAO.CrearFuncionario(nuevoFuncionario);
+        System.out.println("Funcionario creado con ID: " + nuevoFuncionario.getId());
+        
         // ID que deseas actualizar manualmente
         int idExistente = 18;  // Reemplaza con un ID válido
 
@@ -41,5 +61,5 @@ public class GestionRH {
         } else {
             System.out.println("No se encontro el funcionario con ID: " + idExistente);
         }
-    }
+    }*/
 }
