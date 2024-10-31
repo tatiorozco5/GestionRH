@@ -12,4 +12,6 @@ public interface FuncionarioDAO {
     void CrearFuncionario(Funcionario funcionario);
     void ActualizarFuncionario(Funcionario funcionario);
     Funcionario ObtenerFuncionario(int id);
+    void eliminarFuncionario(int id);
+
 }

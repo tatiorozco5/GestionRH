@@ -4,62 +4,17 @@
  */
 package gestionrh;
 
-import gestionrh.Model.Funcionario;
-import gestionrh.dao.FuncionarioDAO;
-import gestionrh.dao.FuncionarioDAOImpl;
-import java.util.Date;
-import java.util.List;
 import gestionrh.gui.MainFrame;
-
 
 public class GestionRH {
 
     public static void main(String[] args) {
-        
+
         javax.swing.SwingUtilities.invokeLater(() -> {
             MainFrame mainFrame = new MainFrame();
             mainFrame.setVisible(true);
-});
-        
+        });
+
     }
-     /*  FuncionarioDAO funcionarioDAO = new FuncionarioDAOImpl();
 
-       System.out.println("Lista de todos los funcionarios:");
-        List<Funcionario> todosLosFuncionarios = funcionarioDAO.listarFuncionarios();
-        for (Funcionario funcionario : todosLosFuncionarios) {
-            System.out.println(funcionario);
-        }
-       
-        Funcionario nuevoFuncionario = new Funcionario();
-        nuevoFuncionario.setTipoIdentificacion("CC");
-        nuevoFuncionario.setNumeroIdentificacion("465645465");
-        nuevoFuncionario.setNombres("Tati");
-        nuevoFuncionario.setApellidos("Orozco");
-        nuevoFuncionario.setEstadoCivil("Soltera");
-        nuevoFuncionario.setSexo("F");
-        nuevoFuncionario.setDireccion("Calle 125");
-        nuevoFuncionario.setTelefono("3213213321");
-        nuevoFuncionario.setFechaNacimiento(new Date());
-        funcionarioDAO.CrearFuncionario(nuevoFuncionario);
-        System.out.println("Funcionario creado con ID: " + nuevoFuncionario.getId());
-        
-        // ID que deseas actualizar manualmente
-        int idExistente = 18;  // Reemplaza con un ID válido
-
-        Funcionario funcionarioExistente = funcionarioDAO.ObtenerFuncionario(idExistente);
-
-        if (funcionarioExistente != null) {
-
-            Funcionario funcionarioActualizado = new Funcionario();
-            funcionarioActualizado.setId(idExistente); // Establece el ID manualmente
-            funcionarioActualizado.setNumeroIdentificacion("23456789");
-
-            funcionarioDAO.ActualizarFuncionario(funcionarioActualizado);
-
-            Funcionario funcionarioDespuesActualizacion = funcionarioDAO.ObtenerFuncionario(idExistente);
-            System.out.println("Funcionario despues de la actualizacion:\n" + funcionarioDespuesActualizacion);
-        } else {
-            System.out.println("No se encontro el funcionario con ID: " + idExistente);
-        }
-    }*/
 }

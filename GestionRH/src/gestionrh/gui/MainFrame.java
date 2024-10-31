@@ -3,15 +3,19 @@ package gestionrh.gui;
 import gestionrh.Model.Funcionario;
 import gestionrh.dao.FuncionarioDAO;
 import gestionrh.dao.FuncionarioDAOImpl;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.*; // Añadir esta línea
+import javax.swing.table.DefaultTableModel;    // Añadir esta línea
 
 public class MainFrame extends javax.swing.JFrame {
+
+    private JButton btnActualizarFuncionario; // Botón para actualizar
+    private JButton btnAbrirActualizar; // Definición de btnAbrirActualizar
     private FuncionarioDAO funcionarioDAO;
     private JTable funcionarioTable;
     private DefaultTableModel tableModel;
-    private JButton actualizarButton;
 
     public MainFrame() {
         initComponents();
@@ -21,9 +25,9 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void setupTable() {
         // Configura la tabla
-        tableModel = new DefaultTableModel(new String[] {
-                "ID", "Tipo de Identificación", "Número de Identificación", "Nombres", "Apellidos",
-                "Estado Civil", "Sexo", "Dirección", "Teléfono", "Fecha de Nacimiento"
+        tableModel = new DefaultTableModel(new String[]{
+            "ID", "Tipo de Identificación", "Número de Identificación", "Nombres", "Apellidos",
+            "Estado Civil", "Sexo", "Dirección", "Teléfono", "Fecha de Nacimiento"
         }, 0);
         funcionarioTable.setModel(tableModel);
     }
@@ -37,17 +41,17 @@ public class MainFrame extends javax.swing.JFrame {
 
         // Agregar funcionarios a la tabla
         for (Funcionario f : funcionarios) {
-            tableModel.addRow(new Object[] {
-                    f.getId(),
-                    f.getTipoIdentificacion(),
-                    f.getNumeroIdentificacion(),
-                    f.getNombres(),
-                    f.getApellidos(),
-                    f.getEstadoCivil(),
-                    f.getSexo(),
-                    f.getDireccion(),
-                    f.getTelefono(),
-                    f.getFechaNacimiento()
+            tableModel.addRow(new Object[]{
+                f.getId(),
+                f.getTipoIdentificacion(),
+                f.getNumeroIdentificacion(),
+                f.getNombres(),
+                f.getApellidos(),
+                f.getEstadoCivil(),
+                f.getSexo(),
+                f.getDireccion(),
+                f.getTelefono(),
+                f.getFechaNacimiento()
             });
         }
     }
@@ -60,9 +64,6 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
 
         // Crear componentes
-        JButton listarButton = new JButton("Listar Funcionarios");
-        listarButton.addActionListener(e -> listarFuncionarios());
-
         funcionarioTable = new JTable();
         JScrollPane scrollPane = new JScrollPane(funcionarioTable);
 
@@ -72,30 +73,85 @@ public class MainFrame extends javax.swing.JFrame {
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 
-        // Dentro del método initComponents() de MainFrame
+        JButton listarButton = new JButton("Listar Funcionarios");
+        listarButton.addActionListener(e -> listarFuncionarios());
+
+        // Crear botón para abrir el formulario de creación
         JButton crearButton = new JButton("Crear Funcionario");
         crearButton.addActionListener(e -> new CrearFuncionarioFrame().setVisible(true));
 
-        JButton actualizarButton = new JButton("Actualizar Funcionario");
-        actualizarButton.addActionListener(e -> new ActualizarFuncionarioFrame().setVisible(true));
+        btnAbrirActualizar = new JButton("Abrir Actualizar");
+        btnAbrirActualizar.addActionListener(e -> {
+            int funcionarioId = obtenerFuncionarioId(); // Obtener el ID del funcionario seleccionado
+            if (funcionarioId != -1) { // Verificar si se obtuvo un ID válido
+                ActualizarFuncionarioFrame actualizarFrame = new ActualizarFuncionarioFrame(funcionarioId);
+                actualizarFrame.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(MainFrame.this, "Por favor, selecciona un funcionario.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        btnActualizarFuncionario = new JButton("Actualizar Funcionario");
+        btnActualizarFuncionario.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int funcionarioId = obtenerFuncionarioId(); // Obtener el ID del funcionario seleccionado
+                if (funcionarioId != -1) { // Verificar si se obtuvo un ID válido
+                    ActualizarFuncionarioFrame actualizarFrame = new ActualizarFuncionarioFrame(funcionarioId);
+                    actualizarFrame.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(MainFrame.this, "Por favor, selecciona un funcionario.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        JButton btnEliminar = new JButton("Eliminar Funcionario");
+        btnEliminar.addActionListener(e -> {
+            int funcionarioId = obtenerFuncionarioId(); // Obtener el ID del funcionario seleccionado
+            if (funcionarioId != -1) { // Verificar si se obtuvo un ID válido
+                int confirm = JOptionPane.showConfirmDialog(MainFrame.this,
+                        "¿Está seguro que desea eliminar al funcionario con ID " + funcionarioId + "?",
+                        "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    funcionarioDAO.eliminarFuncionario(funcionarioId); // Llama al método de la instancia
+                    listarFuncionarios(); // Refresca la lista después de eliminar
+                }
+            } else {
+                JOptionPane.showMessageDialog(MainFrame.this, "Por favor, selecciona un funcionario.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
         // Añadir estos botones al layout
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(listarButton)
                                 .addComponent(crearButton)
-                                .addComponent(actualizarButton)
+                                .addComponent(btnAbrirActualizar) // Añadido aqu
+                                .addComponent(btnEliminar) // Añadido aquí
                                 .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 750,
                                         GroupLayout.PREFERRED_SIZE)));
 
         // En el setVerticalGroup también se deben incluir los nuevos botones
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
+                        .addComponent(listarButton)
                         .addComponent(crearButton)
-                        .addComponent(actualizarButton)
+                        .addComponent(btnAbrirActualizar) // Añadido aquí
+                        .addComponent(btnEliminar) // Añadido aquí
                         .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE));
 
         pack();
+    }
+
+    private int obtenerFuncionarioId() {
+        int selectedRow = funcionarioTable.getSelectedRow(); // Cambiado a funcionarioTable
+
+        if (selectedRow != -1) { // Si hay una fila seleccionada
+            return (int) funcionarioTable.getValueAt(selectedRow, 0); // Cambiado a funcionarioTable
+        } else {
+            return -1; // Retornar -1 si no hay selección
+        }
     }
 
     public static void main(String args[]) {
@@ -116,7 +172,5 @@ public class MainFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
     }
 
-    // Variables declaration - do not modify
-    // End of variables declaration
-
+   
 }

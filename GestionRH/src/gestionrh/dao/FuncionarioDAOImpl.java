@@ -1,10 +1,10 @@
 package gestionrh.dao;
 
+import gestionrh.Config.ConexionDB;
+import gestionrh.Model.Funcionario;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import gestionrh.Config.ConexionDB;
-import gestionrh.Model.Funcionario;
 
 public class FuncionarioDAOImpl implements FuncionarioDAO {
 
@@ -51,58 +51,77 @@ public class FuncionarioDAOImpl implements FuncionarioDAO {
     }
 
     @Override
-    public void ActualizarFuncionario(Funcionario funcionario) {
-        StringBuilder sql = new StringBuilder("UPDATE funcionarios SET ");
-        List<Object> parameters = new ArrayList<>();
+    public void ActualizarFuncionario(Funcionario funcionarioActualizado) {
+        // Paso 1: Recuperar los datos actuales de la base de datos
+        Funcionario funcionarioExistente = ObtenerFuncionario(funcionarioActualizado.getId());
 
-        if (funcionario.getTipoIdentificacion() != null) {
-            sql.append("tipoIdentificacion = ?, ");
-            parameters.add(funcionario.getTipoIdentificacion());
-        }
-        if (funcionario.getNumeroIdentificacion() != null) {
-            sql.append("numeroIdentificacion = ?, ");
-            parameters.add(funcionario.getNumeroIdentificacion());
-        }
-        if (funcionario.getNombres() != null) {
-            sql.append("nombres = ?, ");
-            parameters.add(funcionario.getNombres());
-        }
-        if (funcionario.getApellidos() != null) {
-            sql.append("apellidos = ?, ");
-            parameters.add(funcionario.getApellidos());
-        }
-        if (funcionario.getEstadoCivil() != null) {
-            sql.append("estadoCivil = ?, ");
-            parameters.add(funcionario.getEstadoCivil());
-        }
-        if (funcionario.getSexo() != null) {
-            sql.append("sexo = ?, ");
-            parameters.add(funcionario.getSexo());
-        }
-        if (funcionario.getDireccion() != null) {
-            sql.append("direccion = ?, ");
-            parameters.add(funcionario.getDireccion());
-        }
-        if (funcionario.getTelefono() != null) {
-            sql.append("telefono = ?, ");
-            parameters.add(funcionario.getTelefono());
-        }
-        if (funcionario.getFechaNacimiento() != null) {
-            sql.append("fechaNacimiento = ?, ");
-            parameters.add(new java.sql.Date(funcionario.getFechaNacimiento().getTime()));
+        if (funcionarioExistente == null) {
+            System.out.println("Funcionario no encontrado");
+            return; // O lanzar una excepción
         }
 
-        sql.setLength(sql.length() - 2); // Quita la última coma
-        sql.append(" WHERE id = ?");
-        parameters.add(funcionario.getId());
+        // Paso 2: Verificar y actualizar cada campo
+        String tipoIdentificacion = funcionarioActualizado.getTipoIdentificacion() != null && !funcionarioActualizado.getTipoIdentificacion().isEmpty()
+                ? funcionarioActualizado.getTipoIdentificacion()
+                : funcionarioExistente.getTipoIdentificacion();
 
-        try (Connection con = ConexionDB.Conectar(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
-            for (int i = 0; i < parameters.size(); i++) {
-                ps.setObject(i + 1, parameters.get(i));
+        String numeroIdentificacion = funcionarioActualizado.getNumeroIdentificacion() != null && !funcionarioActualizado.getNumeroIdentificacion().isEmpty()
+                ? funcionarioActualizado.getNumeroIdentificacion()
+                : funcionarioExistente.getNumeroIdentificacion();
+
+        String nombres = funcionarioActualizado.getNombres() != null && !funcionarioActualizado.getNombres().isEmpty()
+                ? funcionarioActualizado.getNombres()
+                : funcionarioExistente.getNombres();
+
+        String apellidos = funcionarioActualizado.getApellidos() != null && !funcionarioActualizado.getApellidos().isEmpty()
+                ? funcionarioActualizado.getApellidos()
+                : funcionarioExistente.getApellidos();
+
+        String estadoCivil = funcionarioActualizado.getEstadoCivil() != null && !funcionarioActualizado.getEstadoCivil().isEmpty()
+                ? funcionarioActualizado.getEstadoCivil()
+                : funcionarioExistente.getEstadoCivil();
+
+        String sexo = funcionarioActualizado.getSexo() != null && !funcionarioActualizado.getSexo().isEmpty()
+                ? funcionarioActualizado.getSexo()
+                : funcionarioExistente.getSexo();
+
+        String direccion = funcionarioActualizado.getDireccion() != null && !funcionarioActualizado.getDireccion().isEmpty()
+                ? funcionarioActualizado.getDireccion()
+                : funcionarioExistente.getDireccion();
+
+        String telefono = funcionarioActualizado.getTelefono() != null && !funcionarioActualizado.getTelefono().isEmpty()
+                ? funcionarioActualizado.getTelefono()
+                : funcionarioExistente.getTelefono();
+
+        java.sql.Date fechaNacimiento;
+        if (funcionarioActualizado.getFechaNacimiento() != null) {
+            fechaNacimiento = new java.sql.Date(funcionarioActualizado.getFechaNacimiento().getTime());
+        } else {
+            fechaNacimiento = (Date) funcionarioExistente.getFechaNacimiento(); // No actualiza, mantiene el existente
+        }
+
+        // Paso 3: Realizar la actualización en la base de datos
+        String query = "UPDATE funcionarios SET tipoIdentificacion = ?, numeroIdentificacion = ?, nombres = ?, apellidos = ?, estadoCivil = ?, sexo = ?, direccion = ?, telefono = ?, fechaNacimiento = ? WHERE id = ?";
+        try (Connection conn = ConexionDB.Conectar(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, tipoIdentificacion);
+            ps.setString(2, numeroIdentificacion);
+            ps.setString(3, nombres);
+            ps.setString(4, apellidos);
+            ps.setString(5, estadoCivil);
+            ps.setString(6, sexo);
+            ps.setString(7, direccion);
+            ps.setString(8, telefono);
+            ps.setDate(9, new java.sql.Date(fechaNacimiento.getTime())); // Conversión de Date a java.sql.Date
+            ps.setInt(10, funcionarioActualizado.getId());
+
+            int rowsUpdated = ps.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Funcionario actualizado exitosamente.");
+            } else {
+                System.out.println("No se actualizó ningún funcionario.");
             }
-            ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Manejo de errores
         }
     }
 
@@ -121,6 +140,20 @@ public class FuncionarioDAOImpl implements FuncionarioDAO {
         }
         return funcionario;
     }
+
+    
+    @Override
+    public void eliminarFuncionario(int id) {
+        String sql = "DELETE FROM funcionarios WHERE id = ?";
+        try (Connection con = ConexionDB.Conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Manejar excepción
+        }
+    }
+
 
     private Funcionario mapResultSetToFuncionario(ResultSet rs) throws SQLException {
         Funcionario funcionario = new Funcionario();

@@ -29,8 +29,9 @@ public class Funcionario {
 
     public Funcionario() {}
 
+    
     public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public void setId(int funcionarioId) { this.id = funcionarioId; }
     public String getTipoIdentificacion() { return tipoIdentificacion; }
     public void setTipoIdentificacion(String tipoIdentificacion) { this.tipoIdentificacion = tipoIdentificacion; }
     public String getNumeroIdentificacion() { return numeroIdentificacion; }

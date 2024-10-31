@@ -1,53 +1,52 @@
 package gestionrh.gui;
 
-import javax.swing.*;
+import gestionrh.Model.Funcionario;
+import gestionrh.dao.FuncionarioDAO;
+import gestionrh.dao.FuncionarioDAOImpl;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class ActualizarFuncionarioFrame extends JFrame {
-    
-    private JTextField idField;
-    private JTextField tipoIdentificacionField;
-    private JTextField numeroIdentificacionField;
-    private JTextField nombresField;
-    private JTextField apellidosField;
-    private JTextField estadoCivilField;
-    private JTextField sexoField;
-    private JTextField direccionField;
-    private JTextField telefonoField;
-    private JTextField fechaNacimientoField;
 
-    public ActualizarFuncionarioFrame() {
+    private JLabel labelTipoIdentificacion, labelNumeroIdentificacion, labelNombres, labelApellidos, labelEstadoCivil, labelSexo, labelDireccion, labelTelefono, labelFechaNacimiento;
+    private JTextField txtNumeroIdentificacion, txtNombres, txtApellidos, txtDireccion, txtTelefono;
+    private JComboBox<String> comboTipoIdentificacion, comboEstadoCivil, comboSexo;
+    private JSpinner spinnerFechaNacimiento;
+    private JButton btnActualizar;
+    private int funcionarioId; 
+
+    public ActualizarFuncionarioFrame(int funcionarioId) {
+        this.funcionarioId = funcionarioId;
         initComponents();
+        pack();
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     private void initComponents() {
-        setTitle("Actualizar Funcionario");
-        setSize(400, 400);
-        setLocationRelativeTo(null); // Centrar la ventana
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE); // Cerrar solo esta ventana
+        labelTipoIdentificacion = new JLabel("Tipo Identificación:");
+        labelNumeroIdentificacion = new JLabel("Número Identificación:");
+        labelNombres = new JLabel("Nombres:");
+        labelApellidos = new JLabel("Apellidos:");
+        labelEstadoCivil = new JLabel("Estado Civil:");
+        labelSexo = new JLabel("Sexo:");
+        labelDireccion = new JLabel("Dirección:");
+        labelTelefono = new JLabel("Teléfono:");
+        labelFechaNacimiento = new JLabel("Fecha Nacimiento:");
 
-        // Crear componentes
-        idField = new JTextField(20);
-        tipoIdentificacionField = new JTextField(20);
-        numeroIdentificacionField = new JTextField(20);
-        nombresField = new JTextField(20);
-        apellidosField = new JTextField(20);
-        estadoCivilField = new JTextField(20);
-        sexoField = new JTextField(20);
-        direccionField = new JTextField(20);
-        telefonoField = new JTextField(20);
-        fechaNacimientoField = new JTextField(20);
-        
-        JButton actualizarButton = new JButton("Actualizar Funcionario");
-        actualizarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                actualizarFuncionario();
-            }
-        });
+        comboTipoIdentificacion = new JComboBox<>(new String[]{"CC", "TI", "CE"}); // Ejemplo de tipos de identificación
+        txtNumeroIdentificacion = new JTextField(20);
+        txtNombres = new JTextField(20);
+        txtApellidos = new JTextField(20);
+        comboEstadoCivil = new JComboBox<>(new String[]{"Soltero", "Casado", "Divorciado"}); // Ejemplo de estados civiles
+        comboSexo = new JComboBox<>(new String[]{"M", "F"});
+        txtDireccion = new JTextField(20);
+        txtTelefono = new JTextField(15);
+        spinnerFechaNacimiento = new JSpinner(new SpinnerDateModel());
 
-        // Configurar el Layout
+        btnActualizar = new JButton("Actualizar");
+        btnActualizar.addActionListener(this::btnActualizarActionPerformed);
+
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setAutoCreateGaps(true);
@@ -56,74 +55,87 @@ public class ActualizarFuncionarioFrame extends JFrame {
         layout.setHorizontalGroup(
             layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(new JLabel("ID"))
-                    .addComponent(idField)
-                    .addComponent(new JLabel("Tipo de Identificación"))
-                    .addComponent(tipoIdentificacionField)
-                    .addComponent(new JLabel("Número de Identificación"))
-                    .addComponent(numeroIdentificacionField)
-                    .addComponent(new JLabel("Nombres"))
-                    .addComponent(nombresField)
-                    .addComponent(new JLabel("Apellidos"))
-                    .addComponent(apellidosField)
-                    .addComponent(new JLabel("Estado Civil"))
-                    .addComponent(estadoCivilField)
-                    .addComponent(new JLabel("Sexo"))
-                    .addComponent(sexoField)
-                    .addComponent(new JLabel("Dirección"))
-                    .addComponent(direccionField)
-                    .addComponent(new JLabel("Teléfono"))
-                    .addComponent(telefonoField)
-                    .addComponent(new JLabel("Fecha de Nacimiento"))
-                    .addComponent(fechaNacimientoField)
-                    .addComponent(actualizarButton))
+                    .addComponent(labelTipoIdentificacion)
+                    .addComponent(labelNumeroIdentificacion)
+                    .addComponent(labelNombres)
+                    .addComponent(labelApellidos)
+                    .addComponent(labelEstadoCivil)
+                    .addComponent(labelSexo)
+                    .addComponent(labelDireccion)
+                    .addComponent(labelTelefono)
+                    .addComponent(labelFechaNacimiento))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(comboTipoIdentificacion)
+                    .addComponent(txtNumeroIdentificacion)
+                    .addComponent(txtNombres)
+                    .addComponent(txtApellidos)
+                    .addComponent(comboEstadoCivil)
+                    .addComponent(comboSexo)
+                    .addComponent(txtDireccion)
+                    .addComponent(txtTelefono)
+                    .addComponent(spinnerFechaNacimiento)
+                    .addComponent(btnActualizar))
         );
 
         layout.setVerticalGroup(
             layout.createSequentialGroup()
-                .addComponent(new JLabel("ID"))
-                .addComponent(idField)
-                .addComponent(new JLabel("Tipo de Identificación"))
-                .addComponent(tipoIdentificacionField)
-                .addComponent(new JLabel("Número de Identificación"))
-                .addComponent(numeroIdentificacionField)
-                .addComponent(new JLabel("Nombres"))
-                .addComponent(nombresField)
-                .addComponent(new JLabel("Apellidos"))
-                .addComponent(apellidosField)
-                .addComponent(new JLabel("Estado Civil"))
-                .addComponent(estadoCivilField)
-                .addComponent(new JLabel("Sexo"))
-                .addComponent(sexoField)
-                .addComponent(new JLabel("Dirección"))
-                .addComponent(direccionField)
-                .addComponent(new JLabel("Teléfono"))
-                .addComponent(telefonoField)
-                .addComponent(new JLabel("Fecha de Nacimiento"))
-                .addComponent(fechaNacimientoField)
-                .addComponent(actualizarButton)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelTipoIdentificacion)
+                    .addComponent(comboTipoIdentificacion))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelNumeroIdentificacion)
+                    .addComponent(txtNumeroIdentificacion))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelNombres)
+                    .addComponent(txtNombres))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelApellidos)
+                    .addComponent(txtApellidos))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelEstadoCivil)
+                    .addComponent(comboEstadoCivil))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelSexo)
+                    .addComponent(comboSexo))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelDireccion)
+                    .addComponent(txtDireccion))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelTelefono)
+                    .addComponent(txtTelefono))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelFechaNacimiento)
+                    .addComponent(spinnerFechaNacimiento))
+                .addComponent(btnActualizar)
         );
-
-        pack(); // Ajustar el tamaño de la ventana según los componentes
     }
 
-    private void actualizarFuncionario() {
-        // Lógica para actualizar un funcionario
-        int id = Integer.parseInt(idField.getText());
-        String tipoIdentificacion = tipoIdentificacionField.getText();
-        String numeroIdentificacion = numeroIdentificacionField.getText();
-        String nombres = nombresField.getText();
-        String apellidos = apellidosField.getText();
-        String estadoCivil = estadoCivilField.getText();
-        String sexo = sexoField.getText();
-        String direccion = direccionField.getText();
-        String telefono = telefonoField.getText();
-        String fechaNacimiento = fechaNacimientoField.getText();
+    private void btnActualizarActionPerformed(ActionEvent evt) {
+        Funcionario funcionario = new Funcionario();
         
-        // Aquí llamarías a tu método DAO para actualizar el funcionario
-        // FuncionarioDAO.actualizarFuncionario(id, ...);
-        
-        JOptionPane.showMessageDialog(this, "Funcionario actualizado exitosamente!");
-        dispose(); // Cerrar la ventana después de actualizar
-}
+        // Rellena el objeto Funcionario con los datos ingresados
+        funcionario.setId(funcionarioId); // Asigna el ID del funcionario
+        funcionario.setTipoIdentificacion((String) comboTipoIdentificacion.getSelectedItem());
+        funcionario.setNumeroIdentificacion(txtNumeroIdentificacion.getText());
+        funcionario.setNombres(txtNombres.getText());
+        funcionario.setApellidos(txtApellidos.getText());
+        funcionario.setEstadoCivil((String) comboEstadoCivil.getSelectedItem());
+        funcionario.setSexo((String) comboSexo.getSelectedItem());
+        funcionario.setDireccion(txtDireccion.getText());
+        funcionario.setTelefono(txtTelefono.getText());
+        funcionario.setFechaNacimiento(new java.sql.Date(((java.util.Date) spinnerFechaNacimiento.getValue()).getTime())); // Convierte a java.sql.Date
+    
+        // Aquí llamas a tu método para actualizar el funcionario
+        try {
+            FuncionarioDAO funcionarioDAO = new FuncionarioDAOImpl(); // Cambia a la implementación
+    
+            funcionarioDAO.ActualizarFuncionario(funcionario); // Actualiza el funcionario en la base de datos
+            JOptionPane.showMessageDialog(this, "Funcionario actualizado con éxito.");
+        } catch (Exception e) {
+            e.printStackTrace(); // Maneja el error adecuadamente
+            JOptionPane.showMessageDialog(this, "Error al actualizar el funcionario.");
+        }
+    
+        dispose(); // Cierra la ventana después de actualizar
+    }
 }
